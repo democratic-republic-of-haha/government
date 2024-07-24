@@ -3,60 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Democratic Republic of Haha</title>
+    <title>Democratic Republic of Haha</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <div class="logo-container">
-            <img src="flag.jpeg" alt="Haha Flag" class="logo">
-            <h1>The Democratic Republic of Haha</h1>
-        </div>
+        <h1>Democratic Republic of Haha</h1>
         <nav>
             <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#history">History</a></li>
-                <li><a href="#culture">Culture</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="control panel.html">Control Panel</a></li>
             </ul>
         </nav>
     </header>
-    
+
     <section id="about">
-        <h2>About Haha</h2>
-        <p>The Democratic Republic Of Haha, formerly known as Hagu, is a country situated in the South Asian Subcontinent with an area of 69,420 km². The country is neutral, promoting peace and prosperity. All residents of this country are cooperative and friendly. The residents are known as Hahians.</p>
+        <h2>About</h2>
+        <p id="about-content">Loading...</p>
     </section>
-    
+
     <section id="history">
         <h2>History</h2>
-        <p>Haha has a rich history of peace and cooperation. Founded on the principles of mutual respect and happiness, it has grown to be a beacon of harmony in the region.</p>
+        <p id="history-content">Loading...</p>
     </section>
-    
+
     <section id="culture">
         <h2>Culture</h2>
-        <p>Hahians are known for their vibrant culture, which includes festivals celebrating laughter and joy. The national motto is "Laughter Unites Us".</p>
+        <p id="culture-content">Loading...</p>
     </section>
-    
+
     <section id="contact">
-        <h2>Contact Us</h2>
-        <form>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
-            
-            <button type="submit">Submit</button>
-        </form>
+        <h2>Contact</h2>
+        <p id="contact-content">Loading...</p>
     </section>
-    
+
     <footer>
         <p>&copy; 2024 The Democratic Republic of Haha. All rights reserved.</p>
     </footer>
-    
-    <script src="script.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+        
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBo3U6qKN4a0rGOFGjK2Z_0ghZ9IfplqNo",
+            authDomain: "social-74606.firebaseapp.com",
+            databaseURL: "https://social-74606-default-rtdb.firebaseio.com",
+            projectId: "social-74606",
+            storageBucket: "social-74606.appspot.com",
+            messagingSenderId: "409425584439",
+            appId: "1:409425584439:web:aad7c6b3bd67c39e113ab2",
+            measurementId: "G-3YGQYDJ61G"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        function loadData() {
+            const dbRef = ref(database);
+            
+            get(child(dbRef, 'content/about')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    document.getElementById('about-content').innerText = snapshot.val().text;
+                } else {
+                    document.getElementById('about-content').innerText = "No data available";
+                }
+            }).catch((error) => {
+                console.error(error);
+                document.getElementById('about-content').innerText = "Error loading data";
+            });
+
+            get(child(dbRef, 'content/history')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    document.getElementById('history-content').innerText = snapshot.val().text;
+                } else {
+                    document.getElementById('history-content').innerText = "No data available";
+                }
+            }).catch((error) => {
+                console.error(error);
+                document.getElementById('history-content').innerText = "Error loading data";
+            });
+
+            get(child(dbRef, 'content/culture')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    document.getElementById('culture-content').innerText = snapshot.val().text;
+                } else {
+                    document.getElementById('culture-content').innerText = "No data available";
+                }
+            }).catch((error) => {
+                console.error(error);
+                document.getElementById('culture-content').innerText = "Error loading data";
+            });
+
+            get(child(dbRef, 'content/contact')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    document.getElementById('contact-content').innerText = snapshot.val().text;
+                } else {
+                    document.getElementById('contact-content').innerText = "No data available";
+                }
+            }).catch((error) => {
+                console.error(error);
+                document.getElementById('contact-content').innerText = "Error loading data";
+            });
+        }
+
+        // Load existing data when the page loads
+        window.onload = loadData;
+    </script>
 </body>
 </html>
