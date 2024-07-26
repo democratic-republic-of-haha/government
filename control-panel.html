@@ -24,7 +24,7 @@
             margin: 20px;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
@@ -37,12 +37,18 @@
             flex-direction: column;
         }
 
+        #home-form label {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
         #home-form textarea {
             margin-bottom: 10px;
             padding: 10px;
             font-size: 16px;
             border-radius: 4px;
             border: 1px solid #ccc;
+            min-height: 200px;
         }
 
         #home-form button {
@@ -58,6 +64,24 @@
         #home-form button:hover {
             background-color: #0056b3;
         }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+        }
+
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -65,12 +89,14 @@
         <h1>Control Panel</h1>
     </header>
     <main>
-        <form id="home-form">
+        <div id="loading" class="loading">Loading...</div>
+        <form id="home-form" style="display:none;">
             <label for="home-textarea">Home Content:</label>
-            <textarea id="home-textarea" rows="10" cols="50"></textarea><br>
+            <textarea id="home-textarea"></textarea><br>
             <button type="submit">Submit</button>
         </form>
     </main>
+    <div id="notification" class="notification">Updated!</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
@@ -78,14 +104,14 @@
         
         // Initialize Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyBo3U6qKN4a0rGOFGjK2Z_0ghZ9IfplqNo",
-            authDomain: "social-74606.firebaseapp.com",
-            databaseURL: "https://social-74606-default-rtdb.firebaseio.com",
-            projectId: "social-74606",
-            storageBucket: "social-74606.appspot.com",
-            messagingSenderId: "409425584439",
-            appId: "1:409425584439:web:aad7c6b3bd67c39e113ab2",
-            measurementId: "G-3YGQYDJ61G"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -100,13 +126,26 @@
                     const content = snapshot.val().text;
                     document.getElementById('home-textarea').value = content;
                 }
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('home-form').style.display = 'flex';
             }).catch((error) => {
                 console.error(error);
+                document.getElementById('loading').innerText = 'Error loading content.';
             });
         }
 
         // Load existing data when the page loads
         window.onload = loadExistingData;
+
+        // Function to show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
 
         // Submit new data to Firebase
         document.getElementById('home-form').addEventListener('submit', (e) => {
@@ -114,6 +153,11 @@
             const content = document.getElementById('home-textarea').value;
             set(ref(database, 'content/home'), {
                 text: content
+            }).then(() => {
+                showNotification('Updated!');
+            }).catch((error) => {
+                console.error(error);
+                alert('Error saving content.');
             });
         });
     </script>
