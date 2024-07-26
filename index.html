@@ -8,39 +8,24 @@
 </head>
 <body>
     <header>
-        <h1>Democratic Republic of Haha</h1>
+        <h1>Welcome to the Democratic Republic of Haha</h1>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-        
+                <li><a href="control-panel.html">Control Panel</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="about">
-        <h2>About</h2>
-        <p id="about-content">Loading...</p>
-    </section>
-
-    <section id="history">
-        <h2>History</h2>
-        <p id="history-content">Loading...</p>
-    </section>
-
-    <section id="culture">
-        <h2>Culture</h2>
-        <p id="culture-content">Loading...</p>
-    </section>
-
-    <section id="contact">
-        <h2>Contact</h2>
-        <p id="contact-content">Loading...</p>
+    <section id="home-content">
+        <!-- Content will be dynamically loaded here -->
     </section>
 
     <footer>
         <p>&copy; 2024 The Democratic Republic of Haha. All rights reserved.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
@@ -63,48 +48,13 @@
         function loadData() {
             const dbRef = ref(database);
             
-            get(child(dbRef, 'content/about')).then((snapshot) => {
+            get(child(dbRef, 'content/home')).then((snapshot) => {
                 if (snapshot.exists()) {
-                    document.getElementById('about-content').innerText = snapshot.val().text;
-                } else {
-                    document.getElementById('about-content').innerText = "No data available";
+                    const content = snapshot.val().text;
+                    document.getElementById('home-content').innerHTML = marked.parse(content);
                 }
             }).catch((error) => {
                 console.error(error);
-                document.getElementById('about-content').innerText = "Error loading data";
-            });
-
-            get(child(dbRef, 'content/history')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('history-content').innerText = snapshot.val().text;
-                } else {
-                    document.getElementById('history-content').innerText = "No data available";
-                }
-            }).catch((error) => {
-                console.error(error);
-                document.getElementById('history-content').innerText = "Error loading data";
-            });
-
-            get(child(dbRef, 'content/culture')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('culture-content').innerText = snapshot.val().text;
-                } else {
-                    document.getElementById('culture-content').innerText = "No data available";
-                }
-            }).catch((error) => {
-                console.error(error);
-                document.getElementById('culture-content').innerText = "Error loading data";
-            });
-
-            get(child(dbRef, 'content/contact')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('contact-content').innerText = snapshot.val().text;
-                } else {
-                    document.getElementById('contact-content').innerText = "No data available";
-                }
-            }).catch((error) => {
-                console.error(error);
-                document.getElementById('contact-content').innerText = "Error loading data";
             });
         }
 
