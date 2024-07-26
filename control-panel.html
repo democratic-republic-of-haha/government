@@ -4,54 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control Panel - Democratic Republic of Haha</title>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Control Panel</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="control panel.html">Control Panel</a></li>
-            </ul>
-        </nav>
-    </header>
+    <h1>Control Panel</h1>
 
-    <section id="control-panel">
-        <h2>Update Content</h2>
-        
-        <div class="form-container">
-            <h3>About</h3>
-            <textarea id="about-text" rows="5" cols="50">Loading...</textarea>
-            <button id="about-submit">Submit</button>
-        </div>
-        
-        <div class="form-container">
-            <h3>History</h3>
-            <textarea id="history-text" rows="5" cols="50">Loading...</textarea>
-            <button id="history-submit">Submit</button>
-        </div>
-        
-        <div class="form-container">
-            <h3>Culture</h3>
-            <textarea id="culture-text" rows="5" cols="50">Loading...</textarea>
-            <button id="culture-submit">Submit</button>
-        </div>
-        
-        <div class="form-container">
-            <h3>Contact</h3>
-            <textarea id="contact-text" rows="5" cols="50">Loading...</textarea>
-            <button id="contact-submit">Submit</button>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 The Democratic Republic of Haha. All rights reserved.</p>
-    </footer>
+    <form id="home-form">
+        <label for="home-textarea">Home Content:</label>
+        <textarea id="home-textarea" rows="10" cols="50"></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
         // Initialize Firebase
         const firebaseConfig = {
@@ -68,75 +33,13 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        function loadData() {
-            const dbRef = ref(database);
-            get(child(dbRef, 'content/about')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('about-text').value = snapshot.val().text;
-                }
-            }).catch((error) => {
-                console.error(error);
+        document.getElementById('home-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const content = document.getElementById('home-textarea').value;
+            set(ref(database, 'content/home'), {
+                text: content
             });
-
-            get(child(dbRef, 'content/history')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('history-text').value = snapshot.val().text;
-                }
-            }).catch((error) => {
-                console.error(error);
-            });
-
-            get(child(dbRef, 'content/culture')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('culture-text').value = snapshot.val().text;
-                }
-            }).catch((error) => {
-                console.error(error);
-            });
-
-            get(child(dbRef, 'content/contact')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('contact-text').value = snapshot.val().text;
-                }
-            }).catch((error) => {
-                console.error(error);
-            });
-        }
-
-        document.getElementById('about-submit').addEventListener('click', () => {
-            const aboutText = document.getElementById('about-text').value;
-            set(ref(database, 'content/about'), {
-                text: aboutText
-            });
-            alert('About content added!');
         });
-
-        document.getElementById('history-submit').addEventListener('click', () => {
-            const historyText = document.getElementById('history-text').value;
-            set(ref(database, 'content/history'), {
-                text: historyText
-            });
-            alert('History content added!');
-        });
-
-        document.getElementById('culture-submit').addEventListener('click', () => {
-            const cultureText = document.getElementById('culture-text').value;
-            set(ref(database, 'content/culture'), {
-                text: cultureText
-            });
-            alert('Culture content added!');
-        });
-
-        document.getElementById('contact-submit').addEventListener('click', () => {
-            const contactText = document.getElementById('contact-text').value;
-            set(ref(database, 'content/contact'), {
-                text: contactText
-            });
-            alert('Contact content added!');
-        });
-
-        // Load existing data when the page loads
-        window.onload = loadData;
     </script>
 </body>
 </html>
