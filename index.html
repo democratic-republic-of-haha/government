@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Democratic Republic of Haha</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Control Panel - Democratic Republic of Haha</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-            background: #f0f0f0;
         }
 
         header {
-            background-color: #4a90e2;
+            background-color: #333;
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -22,10 +21,48 @@
 
         main {
             padding: 20px;
-            background-color: #fff;
             margin: 20px;
+            background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: #333;
+        }
+
+        #home-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #home-form label {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        #home-form textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            min-height: 200px;
+        }
+
+        #home-form button {
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #home-form button:hover {
+            background-color: #0056b3;
         }
 
         .loading {
@@ -34,47 +71,36 @@
             color: #888;
         }
 
-        h1, h2, h3, p {
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 2.5em;
-            text-transform: uppercase;
-        }
-
-        h2 {
-            color: #444;
-            font-size: 2em;
-            text-transform: uppercase;
-        }
-
-        h3 {
-            color: #555;
-            font-size: 1.5em;
-            text-transform: uppercase;
-        }
-
-        p {
-            color: #666;
-            line-height: 1.6;
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Democratic Republic of Haha</h1>
+        <h1>Control Panel</h1>
     </header>
     <main>
-        <div id="content" class="loading">Loading...</div>
+        <div id="loading" class="loading">Loading...</div>
+        <form id="home-form" style="display:none;">
+            <label for="home-textarea">Home Content:</label>
+            <textarea id="home-textarea"></textarea><br>
+            <button type="submit">Submit</button>
+        </form>
     </main>
+    <div id="notification" class="notification">Updated!</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
         // Initialize Firebase
         const firebaseConfig = {
@@ -91,25 +117,53 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Load existing data into content div
+        // Load existing data into textarea when the page loads
         function loadExistingData() {
             const dbRef = ref(database);
+
             get(child(dbRef, 'content/home')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const content = snapshot.val().text;
-                    const parsedContent = marked(content);
-                    document.getElementById('content').innerHTML = parsedContent;
+                    document.getElementById('home-textarea').value = content;
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('home-form').style.display = 'flex';
                 } else {
-                    document.getElementById('content').innerHTML = 'No content available.';
+                    document.getElementById('loading').innerText = 'No content available.';
+                    document.getElementById('home-form').style.display = 'flex';
                 }
             }).catch((error) => {
                 console.error(error);
-                document.getElementById('content').innerHTML = 'Error loading content.';
+                document.getElementById('loading').innerText = 'Error loading content.';
+                document.getElementById('home-form').style.display = 'flex';
             });
         }
 
         // Load existing data when the page loads
         window.onload = loadExistingData;
+
+        // Function to show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Submit new data to Firebase
+        document.getElementById('home-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const content = document.getElementById('home-textarea').value;
+            set(ref(database, 'content/home'), {
+                text: content
+            }).then(() => {
+                showNotification('Updated!');
+            }).catch((error) => {
+                console.error(error);
+                alert('Error saving content.');
+            });
+        });
     </script>
 </body>
 </html>
