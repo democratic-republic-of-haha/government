@@ -4,72 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Democratic Republic of Haha</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: 'Orbitron', sans-serif;
-            background-color: #20232a;
-            color: #61dafb;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        header {
-            text-align: center;
-            padding: 20px;
-        }
-        main {
-            padding: 20px;
-            width: 80%;
-        }
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            text-align: center;
-        }
-        #loading {
-            font-size: 18px;
-            color: #61dafb;
-        }
-        h1, h2, h3, p {
-            margin: 0 0 20px;
-        }
-        h1 {
-            font-size: 36px;
-            font-weight: 700;
-        }
-        h2 {
-            font-size: 30px;
-            font-weight: 700;
-        }
-        h3 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        p {
-            font-size: 18px;
-        }
-    </style>
 </head>
 <body>
     <header>
-        <h1>Democratic Republic of Haha</h1>
+        <h1>Welcome to the Democratic Republic of Haha</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
     </header>
-    <main id="content-container">
-        <div id="loading">Loading...</div>
-        <div id="home-content" style="display: none;"></div>
-    </main>
+
+    <section id="home-content">
+        Loading...Please wait
+        <!-- Content will be dynamically loaded here -->
+    </section>
+
     <footer>
-        <p>&copy; 2024 Democratic Republic of Haha</p>
+        <p>&copy; 2024 The Democratic Republic of Haha. All rights reserved.</p>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
+        // Initialize Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBo3U6qKN4a0rGOFGjK2Z_0ghZ9IfplqNo",
             authDomain: "social-74606.firebaseapp.com",
@@ -84,22 +45,21 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        function loadExistingData() {
+        function loadData() {
             const dbRef = ref(database);
+            
             get(child(dbRef, 'content/home')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const content = snapshot.val().text;
-                    const homeContent = document.getElementById('home-content');
-                    homeContent.innerHTML = marked(content);
-                    document.getElementById('loading').style.display = 'none';
-                    homeContent.style.display = 'block';
+                    document.getElementById('home-content').innerHTML = marked.parse(content);
                 }
             }).catch((error) => {
                 console.error(error);
             });
         }
 
-        window.onload = loadExistingData;
+        // Load existing data when the page loads
+        window.onload = loadData;
     </script>
 </body>
-        </html>
+</html>
