@@ -5,24 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Democratic Republic of Haha</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+        }
+
+        header {
+            background-color: #4a90e2;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+            background-color: #fff;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+        }
+
+        h1, h2, h3, p {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            color: #444;
+            font-size: 2em;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to the Democratic Republic of Haha</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-            </ul>
-        </nav>
+        <h1>Democratic Republic of Haha</h1>
     </header>
-
-    <section id="home-content">
-        <!-- Content will be dynamically loaded here -->
-    </section>
-
-    <footer>
-        <p>&copy; 2024 The Democratic Republic of Haha. All rights reserved.</p>
-    </footer>
+    <main>
+        <div id="content" class="loading">Loading...</div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module">
@@ -31,34 +78,38 @@
         
         // Initialize Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyBo3U6qKN4a0rGOFGjK2Z_0ghZ9IfplqNo",
-            authDomain: "social-74606.firebaseapp.com",
-            databaseURL: "https://social-74606-default-rtdb.firebaseio.com",
-            projectId: "social-74606",
-            storageBucket: "social-74606.appspot.com",
-            messagingSenderId: "409425584439",
-            appId: "1:409425584439:web:aad7c6b3bd67c39e113ab2",
-            measurementId: "G-3YGQYDJ61G"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
         };
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        function loadData() {
+        // Load existing data into content div
+        function loadExistingData() {
             const dbRef = ref(database);
-            
             get(child(dbRef, 'content/home')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const content = snapshot.val().text;
-                    document.getElementById('home-content').innerHTML = marked.parse(content);
+                    const parsedContent = marked(content);
+                    document.getElementById('content').innerHTML = parsedContent;
+                } else {
+                    document.getElementById('content').innerHTML = 'No content available.';
                 }
             }).catch((error) => {
                 console.error(error);
+                document.getElementById('content').innerHTML = 'Error loading content.';
             });
         }
 
         // Load existing data when the page loads
-        window.onload = loadData;
+        window.onload = loadExistingData;
     </script>
 </body>
 </html>
