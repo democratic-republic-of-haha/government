@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">   
     <title>Control Panel - Democratic Republic of Haha</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f0f4f8; /* Light grayish blue background */
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #333;
+            background-color: #001f3f; /* Navy blue header background */
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -22,14 +23,15 @@
         main {
             padding: 20px;
             margin: 20px;
-            background-color: #fff;
+            background-color: #fff; /* White background for main content */
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
-            color: #333;
+            color: #00aaff; /* Bright cyan for h1 */
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3); /* Softer shadow for h1 */
         }
 
         #home-form {
@@ -37,26 +39,69 @@
             flex-direction: column;
         }
 
-        #home-form textarea {
+        .content-container {
+            display: flex;
+            gap: 20px; /* Space between the textarea and preview */
+        }
+
+        #home-textarea-container,
+        #preview-container {
+            flex: 1;
+        }
+
+        #home-textarea-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px; /* Adjust this value to fit your needs */
+        }
+
+        #home-textarea {
             margin-bottom: 10px;
             padding: 10px;
             font-size: 16px;
             border-radius: 4px;
-            border: 1px solid #ccc;
+            border: 1px solid #001f3f; /* Navy blue border for textarea */
+            width: 100%; /* Full width for the textarea */
+            height: 100%; /* Full height for the textarea */
+            resize: none; /* Make textarea non-resizable */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+
+        #preview {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff; /* White background for preview */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #001f3f; /* Navy blue border for preview */
+            height: 500px; /* Adjust this value to fit your needs */
+            overflow: auto; /* Allows scrolling if content overflows */
         }
 
         #home-form button {
             padding: 10px;
             font-size: 16px;
             color: #fff;
-            background-color: #007BFF;
+            background-color: #001f3f; /* Navy blue button background */
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
 
         #home-form button:hover {
-            background-color: #0056b3;
+            background-color: #003366; /* Slightly darker navy blue on hover */
+        }
+
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745; /* Green background for success */
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
         }
     </style>
 </head>
@@ -66,12 +111,26 @@
     </header>
     <main>
         <form id="home-form">
-            <label for="home-textarea">Home Content:</label>
-            <textarea id="home-textarea" rows="10" cols="50"></textarea><br>
+            <div class="content-container">
+                <div id="home-textarea-container">
+                    <label for="home-textarea">Home Content:</label>
+                    <textarea id="home-textarea">Loading...</textarea>
+                </div>
+                <div id="preview-container">
+                    <label>Rendered:</label>
+                    <div id="preview">
+                        Loading...
+                        <!-- Live Markdown preview will be rendered here -->
+                    </div>
+                </div>
+            </div>
             <button type="submit">Submit</button>
         </form>
+        
+        <div id="notification" class="notification">Added!</div> <!-- Notification element -->
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
@@ -99,14 +158,35 @@
                 if (snapshot.exists()) {
                     const content = snapshot.val().text;
                     document.getElementById('home-textarea').value = content;
+                    updatePreview(content); // Update the preview on page load
                 }
             }).catch((error) => {
                 console.error(error);
             });
         }
 
+        // Function to update the live preview
+        function updatePreview(content) {
+            document.getElementById('preview').innerHTML = marked.parse(content);
+        }
+
+        // Function to show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000); // Hide notification after 2 seconds
+        }
+
         // Load existing data when the page loads
         window.onload = loadExistingData;
+
+        // Update preview as textarea content changes
+        document.getElementById('home-textarea').addEventListener('input', (e) => {
+            updatePreview(e.target.value);
+        });
 
         // Submit new data to Firebase
         document.getElementById('home-form').addEventListener('submit', (e) => {
@@ -114,6 +194,10 @@
             const content = document.getElementById('home-textarea').value;
             set(ref(database, 'content/home'), {
                 text: content
+            }).then(() => {
+                showNotification('Added!');
+            }).catch((error) => {
+                console.error(error);
             });
         });
     </script>
