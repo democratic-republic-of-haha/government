@@ -50,19 +50,19 @@ footer {
 h1 {
     font-family: 'Orbitron', sans-serif;
     color: #00aaff; /* Bright cyan for h1 */
-    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3); /* Softer, centered shadow for h1 */
+    /*text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);  Softer, centered shadow for h1 */
 }
 
 h2 {
     font-family: 'Orbitron', sans-serif;
     color: #00cfff; /* Lighter cyan for h2 */
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25); /* Softer, centered shadow for h2 */
+    /*text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);  Softer, centered shadow for h2 */
 }
 
 h3 {
     font-family: 'Orbitron', sans-serif;
     color: #66d9ff; /* Light cyan for h3 */
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Softer, centered shadow for h3 */
+    /*text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); Softer, centered shadow for h3 */
 }
 
 p {
